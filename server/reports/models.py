@@ -1,3 +1,11 @@
 from django.db import models
+from tasks.models import Task
 
-# Create your models here.
+class Report(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    content = models.TextField()
+    summary = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report for {self.task.title}"
