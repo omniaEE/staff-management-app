@@ -1,21 +1,35 @@
-version: '3.8'
+version: "3.8"
 
 services:
-
-  db:                        
-    image: postgres:16       
+  db:
+    image: postgres:16
     container_name: staff_postgres
-    restart: always          
-    environment:             
-      POSTGRES_USER: postgres   
-      POSTGRES_PASSWORD: password 
-      POSTGRES_DB: staffdb     
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: staffdb
     ports:
-      - "5432:5432"          # Expose container port 5432 to host 5432
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data # Persist data
+      - postgres_data:/var/lib/postgresql/data
 
-
+  backend:
+    build: .
+    container_name: staff_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DB_NAME: staffdb
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      - db
 
 volumes:
-  postgres_data:              # Named volume to store Postgres data persistently
+  postgres_data:
